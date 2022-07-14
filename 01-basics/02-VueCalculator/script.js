@@ -29,8 +29,8 @@ const App = defineComponent({
     return {
       firstNumber: 0,
       secondNumber: 0,
-      operations: null,
-      selectedOperation: null,
+      operations: operations,
+      selectedOperation: operations[0].name,
     };
   },
   computed: {
@@ -42,10 +42,6 @@ const App = defineComponent({
         return 0;
       }
     },
-  },
-  created() {
-    this.operations = operations;
-    this.selectedOperation = operations[0].name;
   },
   template: `
     <div class="row">
@@ -59,8 +55,7 @@ const App = defineComponent({
           type="radio"
           name="operator"
           :value="operation.name"
-          :checked="operation.name===selectedOperation"
-          @input="selectedOperation=operation.name"
+          v-model="selectedOperation"
         />
          {{ operation.operator }}
       </label>

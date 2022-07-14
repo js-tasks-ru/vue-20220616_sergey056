@@ -37,15 +37,14 @@ const App = defineComponent({
         type="radio"
         name="meetupId"
         :value="index"
-        :checked="meetupId === index"
-        @change="meetupId = index"
+        v-model="meetupId"
       />
       {{ index }}
     </label>
 
     <hr />
 
-    <h3>{{ meetupData?.title ?? '' }}</h3>
+    <h3>{{ meetupData?.title }}</h3>
     </div>
   `,
 });

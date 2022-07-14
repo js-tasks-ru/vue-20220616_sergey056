@@ -27,8 +27,7 @@ export default defineComponent({
   },
   watch: {
     meetupId: {
-      handler(newVal, oldVal) {
-        if (newVal === oldVal) return;
+      handler(newVal) {
         this.loadMeetup(newVal);
       },
       immediate: true,
