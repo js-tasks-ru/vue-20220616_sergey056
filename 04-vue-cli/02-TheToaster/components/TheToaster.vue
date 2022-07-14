@@ -1,6 +1,6 @@
 <template>
   <div class="toasts">
-    <ui-toast v-for="toast in toasts" :key="toast.id" :toast="toast" @delete="deleteToast" />
+    <ui-toast v-for="toast in toasts" :key="toast.id" :toast="toast" @delete="deleteToast(toast.id)" />
   </div>
 </template>
 

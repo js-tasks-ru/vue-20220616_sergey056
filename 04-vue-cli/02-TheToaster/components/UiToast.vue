@@ -1,5 +1,5 @@
 <template>
-  <div :class="`toast ${classByType}`">
+  <div class="toast" :class="classByType">
     <ui-icon class="toast__icon" :icon="iconByType" />
     <span>{{ toast.message }}</span>
   </div>
@@ -41,7 +41,7 @@ export default {
 
   mounted() {
     setTimeout(() => {
-      this.$emit('delete', this.toast.id);
+      this.$emit('delete');
     }, this.periodByType);
   },
 };
