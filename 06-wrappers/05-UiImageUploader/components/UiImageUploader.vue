@@ -1,8 +1,20 @@
 <template>
   <div class="image-uploader">
-    <label class="image-uploader__preview image-uploader__preview-loading" style="--bg-url: url('/link.jpeg')">
-      <span class="image-uploader__text">Загрузить изображение</span>
-      <input type="file" accept="image/*" class="image-uploader__input" />
+    <label
+      class="image-uploader__preview"
+      :class="{ 'image-uploader__preview-loading': loading }"
+      :style="loaded ? `--bg-url: url('${localPreview}')` : ''"
+    >
+      <span class="image-uploader__text">{{ message }}</span>
+      <input
+        v-bind="$attrs"
+        ref="fileInput"
+        type="file"
+        accept="image/*"
+        class="image-uploader__input"
+        @change="handleChange"
+        @click="handleClick"
+      />
     </label>
   </div>
 </template>
@@ -10,6 +22,98 @@
 <script>
 export default {
   name: 'UiImageUploader',
+
+  inheritAttrs: false,
+
+  props: {
+    preview: {
+      type: String,
+      default: '',
+    },
+
+    uploader: {
+      type: Function,
+    },
+  },
+
+  emits: ['remove', 'select', 'error', 'upload'],
+
+  data() {
+    return {
+      loading: false,
+      loaded: !!this.preview,
+      localPreview: this.preview,
+    };
+  },
+
+  computed: {
+    message() {
+      if (this.loading) return 'Загрузка...';
+      else if (this.loaded) return 'Удалить изображение';
+      else return 'Загрузить изображение';
+    },
+  },
+
+  watch: {
+    preview(newValue) {
+      this.localPreview = newValue;
+    },
+  },
+
+  methods: {
+    handleChange(event) {
+      if (!event.target.files?.length) return;
+
+      const file = event.target.files[0];
+      this.$emit('select', file);
+
+      if (this.uploader) {
+        this.toLoadingState();
+        try {
+          this.uploader(file).then(
+            (result) => {
+              this.$emit('upload', result);
+              this.toSuccessLoadedState();
+            },
+            (error) => {
+              this.$emit('error', error);
+              this.toEmptyState();
+            },
+          );
+        } catch (e) {
+          this.toEmptyState();
+        }
+      } else {
+        this.localPreview = URL.createObjectURL(file);
+        this.toSuccessLoadedState();
+      }
+    },
+
+    handleClick(event) {
+      if (this.loaded) {
+        event.preventDefault();
+        this.$refs.fileInput.value = '';
+        this.$emit('remove');
+        this.loaded = false;
+      }
+    },
+
+    toLoadingState() {
+      this.loading = true;
+      this.loaded = false;
+    },
+
+    toSuccessLoadedState() {
+      this.loading = false;
+      this.loaded = true;
+    },
+
+    toEmptyState() {
+      this.loading = false;
+      this.loaded = false;
+      this.$refs.fileInput.value = '';
+    },
+  },
 };
 </script>
 

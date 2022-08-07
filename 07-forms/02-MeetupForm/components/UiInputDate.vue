@@ -1,5 +1,9 @@
 <template>
-  <ui-input :model-value="value" @input="handleInput" />
+  <ui-input :model-value="value" :type="type" @input="handleInput">
+    <template v-for="slotName in Object.keys($slots)" #[slotName]="slotProps">
+      <slot :name="slotName" v-bind="slotProps" />
+    </template>
+  </ui-input>
 </template>
 
 <script>
@@ -11,7 +15,15 @@ export default {
   components: { UiInput },
 
   props: {
-    modelValue: Number,
+    type: {
+      type: String,
+      default: 'date',
+      validator: (value) => ['date', 'time', 'datetime-local'].includes(value),
+    },
+
+    modelValue: {
+      type: Number,
+    },
   },
 
   emits: ['update:modelValue'],
@@ -21,13 +33,20 @@ export default {
       if (!this.modelValue) {
         return '';
       }
-      return new Date(this.modelValue).toISOString().substring(0, 10);
+      const isoDateTime = new Date(this.modelValue).toISOString();
+      if (this.type === 'date') {
+        return isoDateTime.split('T')[0];
+      } else if (this.type === 'time') {
+        return isoDateTime.split('T')[1].split('.')[0].substring(0, 5);
+      } else {
+        return isoDateTime.split('.')[0];
+      }
     },
   },
 
   methods: {
-    handleInput($event) {
-      this.$emit('update:modelValue', $event.target.value === '' ? null : $event.target.valueAsNumber);
+    handleInput(event) {
+      this.$emit('update:modelValue', event.target.valueAsNumber);
     },
   },
 };
