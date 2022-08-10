@@ -31,18 +31,10 @@ export default {
     };
   },
 
-  watch: {
-    messages: {
-      handler() {
-        this.$nextTick(() => this.scrollDownMessages());
-      },
-      deep: true,
-    },
-  },
-
   methods: {
     handleSendSubmit() {
       this.send();
+      this.$nextTick(() => this.scrollDownMessages());
     },
 
     send() {

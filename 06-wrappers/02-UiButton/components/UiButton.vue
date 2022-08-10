@@ -1,7 +1,7 @@
 <template>
   <component
     :is="tag"
-    v-bind="{ type: tag === 'button' ? 'button' : null }"
+    :type="tag === 'button' ? 'button' : null"
     class="button"
     :class="[variantClass, { button_block: block }]"
   >

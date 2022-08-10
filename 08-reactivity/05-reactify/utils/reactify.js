@@ -1,4 +1,4 @@
-import { computed } from 'vue';
+import { computed, unref } from 'vue';
 
 /**
  * @template T
@@ -8,15 +8,6 @@ import { computed } from 'vue';
 export function reactify(func) {
   return (...args) =>
     computed(() => {
-      const notReactArgs = [];
-
-      args.forEach((arg) => {
-        if (arg['__v_isRef']) {
-          notReactArgs.push(arg.value);
-        } else {
-          notReactArgs.push(arg);
-        }
-      });
-      return func.apply(null, notReactArgs);
+      return func(...args.map((arg) => unref(arg)));
     });
 }
