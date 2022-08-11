@@ -18,8 +18,7 @@
       v-bind="$attrs"
       class="form-control"
       :class="{ 'form-control_rounded': rounded, 'form-control_sm': small }"
-      @input="handleEvent"
-      @change="handleEvent"
+      @[eventType]="$emit('update:modelValue', $event.target.value)"
     />
 
     <div v-if="$slots['right-icon']" class="input-group__icon">
@@ -61,14 +60,15 @@ export default {
 
   emits: ['update:modelValue'],
 
+  computed: {
+    eventType() {
+      return this.modelModifiers.lazy ? 'change' : 'input';
+    },
+  },
+
   methods: {
     focus() {
       this.$refs['input'].focus();
-    },
-
-    handleEvent(event) {
-      if (this.modelModifiers.lazy && event.type === 'input') return;
-      this.$emit('update:modelValue', event.target.value);
     },
   },
 };
